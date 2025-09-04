@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>اختبار أمن المنشآت</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d5a27 100%);
+            color: white;
+            min-height: 100vh;
+            direction: rtl;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.7);
+            border-radius: 15px;
+            border: 2px solid #4CAF50;
+        }
+        
+        .header h1 {
+            color: #4CAF50;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+        
+        .form-container, .quiz-container {
+            background: rgba(0, 0, 0, 0.8);
+            border-radius: 15px;
+            padding: 30px;
+            border: 2px solid #4CAF50;
+            box-shadow: 0 10px 30px rgba(76, 175, 80, 0.3);
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #4CAF50;
+            font-weight: bold;
+        }
+        
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #4CAF50;
+            border-radius: 8px;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            font-size: 16px;
+        }
+        
+        .form-group input:focus {
+            outline: none;
+            border-color: #81C784;
+            box-shadow: 0 0 10px rgba(76, 175, 80, 0.5);
+        }
+        
+        .btn {
+            background: linear-gradient(45deg, #4CAF50, #81C784);
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 18px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(76, 175, 80, 0.4);
+        }
+        
+        .question {
+            background: rgba(0, 0, 0, 0.5);
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 10px;
+            border-left: 4px solid #4CAF50;
+        }
+        
+        .question h3 {
+            color: #4CAF50;
+            margin-bottom: 15px;
+            font-size: 1.2em;
+        }
+        
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .option {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px;
+            background: rgba(76, 175, 80, 0.1);
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .option:hover {
+            background: rgba(76, 175, 80, 0.2);
+        }
+        
+        .option.selected {
+            background: rgba(76, 175, 80, 0.4) !important;
+            border: 1px solid #4CAF50;
+        }
+        
+        .option input[type="radio"] {
+            accent-color: #4CAF50;
+        }
+        
+        .result {
+            text-align: center;
+            padding: 30px;
+            margin-top: 20px;
+            background: rgba(0, 0, 0, 0.8);
+            border-radius: 15px;
+            border: 2px solid #4CAF50;
+        }
+        
+        .result h2 {
+            color: #4CAF50;
+            margin-bottom: 20px;
+        }
+        
+        .score {
+            font-size: 2em;
+            font-weight: bold;
+            color: #81C784;
+            margin-bottom: 20px;
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 10px;
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 5px;
+            margin: 20px 0;
+            overflow: hidden;
+        }
+        
+        .progress {
+            height: 100%;
+            background: linear-gradient(45deg, #4CAF50, #81C784);
+            transition: width 0.3s ease;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🛡️ اختبار أمن المنشآت 🛡️</h1>
+            <p>اختبر معرفتك في مجال أمن وحماية المنشآت</p>
+        </div>
+
+        <!-- نموذج المعلومات الشخصية -->
+        <div id="userForm" class="form-container">
+            <h2 style="color: #4CAF50; text-align: center; margin-bottom: 30px;">معلوماتك الشخصية</h2>
+                <div class="form-group">
+                    <label for="name">اسمك:</label>
+                    <input type="text" id="name" name="name" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="age">عمرك:</label>
+                    <input type="number" id="age" name="age" required min="16" max="100">
+                </div>
+                
+                <div class="form-group">
+                    <label for="discord">ID الديسكورد:</label>
+                    <input type="text" id="discord" name="discord" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="username">اسم حسابك:</label>
+                    <input type="text" id="username" name="username" required>
+                </div>
+                
+                <button type="button" class="btn" onclick="startQuiz()">ابدأ الاختبار</button>
+        </div>
+
+        <!-- الاختبار -->
+        <div id="quiz" class="quiz-container hidden">
+            <div class="progress-bar">
+                <div id="progress" class="progress" style="width: 0%"></div>
+            </div>
+            <p id="questionNumber" style="text-align: center; color: #4CAF50; font-weight: bold;">السؤال 1 من 20</p>
+            
+            <div id="questionContainer"></div>
+            
+            <button type="button" class="btn" onclick="nextQuestion()">السؤال التالي</button>
+        </div>
+
+        <!-- النتيجة -->
+        <div id="result" class="result hidden">
+            <h2>🎉 تهانينا! لقد أكملت الاختبار 🎉</h2>
+            <div id="userInfo"></div>
+            <div class="score" id="finalScore"></div>
+            <div id="scoreMessage"></div>
+            <button type="button" class="btn" onclick="restartQuiz()" style="margin-top: 20px;">إعادة الاختبار</button>
+        </div>
+    </div>
+
+    <script>
+        let currentUser = {};
+        let currentQuestion = 0;
+        let score = 0;
+        let userAnswers = [];
+
+        const questions = [
+            {
+                question: "ما هو الهدف الأساسي من أمن المنشآت؟",
+                options: [
+                    "حماية الأشخاص والممتلكات من التهديدات",
+                    "تقليل التكاليف التشغيلية",
+                    "زيادة عدد الموظفين",
+                    "تحسين الشكل العام للمنشأة"
+                ],
+                correct: 0
+            },
+            {
+                question: "أي من التالي يعتبر من أنواع التهديدات الفيزيائية؟",
+                options: [
+                    "الاختراق الإلكتروني",
+                    "السطو والسرقة",
+                    "الفيروسات",
+                    "التصيد الإلكتروني"
+                ],
+                correct: 1
+            },
+            {
+                question: "ما هي المنطقة الأمنية الأولى في المنشأة؟",
+                options: [
+                    "المنطقة الداخلية",
+                    "المنطقة الخارجية (المحيط)",
+                    "غرفة التحكم",
+                    "المداخل الرئيسية"
+                ],
+                correct: 1
+            },
+            {
+                question: "أي من أنظمة المراقبة التالية الأكثر فعالية في الظلام؟",
+                options: [
+                    "الكاميرات العادية",
+                    "الكاميرات الحرارية",
+                    "أجهزة الإنذار الصوتية",
+                    "أجهزة الاستشعار الضوئية"
+                ],
+                correct: 1
+            },
+            {
+                question: "ما هو الغرض من نظام التحكم في الوصول؟",
+                options: [
+                    "توفير الإضاءة",
+                    "التحكم في درجة الحرارة",
+                    "منع الدخول غير المصرح به",
+                    "تشغيل أنظمة الإنذار"
+                ],
+                correct: 2
+            },
+            {
+                question: "كم مرة يجب فحص أنظمة الأمان؟",
+                options: [
+                    "مرة واحدة سنوياً",
+                    "كل ستة أشهر",
+                    "بشكل دوري منتظم",
+                    "عند حدوث مشكلة فقط"
+                ],
+                correct: 2
+            },
+            {
+                question: "أي من التالي يعتبر من معدات الحماية الشخصية؟",
+                options: [
+                    "كاميرات المراقبة",
+                    "أجهزة الإنذار",
+                    "الخوذة والسترة الواقية",
+                    "أنظمة الإضاءة"
+                ],
+                correct: 2
+            },
+            {
+                question: "ما هي أهمية خطة الإخلاء في المنشآت؟",
+                options: [
+                    "توفير المال",
+                    "ضمان الخروج الآمن في حالات الطوارئ",
+                    "تقليل عدد الموظفين",
+                    "تحسين الإنتاجية"
+                ],
+                correct: 1
+            },
+            {
+                question: "أي نوع من أجهزة الاستشعار يكتشف الحركة؟",
+                options: [
+                    "أجهزة استشعار الدخان",
+                    "أجهزة استشعار الحرارة",
+                    "أجهزة استشعار الحركة PIR",
+                    "أجهزة استشعار الصوت"
+                ],
+                correct: 2
+            },
+            {
+                question: "ما هو دور الحراس في أمن المنشآت؟",
+                options: [
+                    "تنظيف المباني",
+                    "المراقبة والاستجابة للتهديدات",
+                    "إصلاح المعدات",
+                    "إدارة الأموال"
+                ],
+                correct: 1
+            },
+            {
+                question: "أي من التالي يعتبر نقطة ضعف في أمن المنشآت؟",
+                options: [
+                    "النوافذ المحمية",
+                    "المداخل غير المراقبة",
+                    "أنظمة الإنذار الفعالة",
+                    "الحراس المدربون"
+                ],
+                correct: 1
+            },
+            {
+                question: "ما هي أهمية الإضاءة في أمن المنشآت؟",
+                options: [
+                    "توفير الطاقة",
+                    "ردع المتسللين وتحسين الرؤية",
+                    "تحسين الشكل العام",
+                    "تقليل التكاليف"
+                ],
+                correct: 1
+            },
+            {
+                question: "كيف يجب التعامل مع الزوار في المنشآت الأمنية؟",
+                options: [
+                    "السماح لهم بالدخول بحرية",
+                    "تسجيلهم ومرافقتهم",
+                    "منعهم من الدخول نهائياً",
+                    "تجاهلهم"
+                ],
+                correct: 1
+            },
+            {
+                question: "ما هو الغرض من أنظمة إنذار الحريق؟",
+                options: [
+                    "منع السرقة",
+                    "الكشف المبكر عن الحرائق وإنذار الأشخاص",
+                    "مراقبة الموظفين",
+                    "توفير الإضاءة"
+                ],
+                correct: 1
+            },
+            {
+                question: "أي من التالي يعتبر من طرق تأمين المحيط الخارجي؟",
+                options: [
+                    "كاميرات المراقبة الداخلية فقط",
+                    "الأسوار والأسلاك الشائكة",
+                    "أقفال الأبواب الداخلية",
+                    "خزائن الأمان"
+                ],
+                correct: 1
+            },
+            {
+                question: "ما هي أهمية التدريب للعاملين في الأمن؟",
+                options: [
+                    "زيادة الراتب",
+                    "تحسين الأداء والاستجابة للطوارئ",
+                    "تقليل ساعات العمل",
+                    "الحصول على إجازات أكثر"
+                ],
+                correct: 1
+            },
+            {
+                question: "كيف يمكن حماية المعلومات المهمة في المنشأة؟",
+                options: [
+                    "وضعها في مكان مفتوح",
+                    "تخزينها في خزائن آمنة ونظم حماية",
+                    "مشاركتها مع الجميع",
+                    "طباعتها وتوزيعها"
+                ],
+                correct: 1
+            },
+            {
+                question: "ما هو دور التكنولوجيا في أمن المنشآت الحديثة؟",
+                options: [
+                    "تعقيد العمليات",
+                    "تحسين الكفاءة والمراقبة",
+                    "زيادة التكاليف فقط",
+                    "تقليل الأمان"
+                ],
+                correct: 1
+            },
+            {
+                question: "أي من التالي يعتبر من أساليب التخفي والتمويه؟",
+                options: [
+                    "استخدام الألوان الزاهية",
+                    "الإضاءة القوية",
+                    "استخدام النباتات والعوائق الطبيعية",
+                    "الأصوات العالية"
+                ],
+                correct: 2
+            },
+            {
+                question: "ما هي أهمية المراجعة الدورية لأنظمة الأمان؟",
+                options: [
+                    "إضاعة الوقت",
+                    "ضمان الفعالية والكشف عن نقاط الضعف",
+                    "زيادة التكاليف",
+                    "تعقيد النظام"
+                ],
+                correct: 1
+            }
+        ];
+
+        function startQuiz() {
+            console.log('Start quiz function called');
+            
+            // الحصول على القيم
+            const name = document.getElementById('name').value.trim();
+            const age = document.getElementById('age').value.trim();
+            const discord = document.getElementById('discord').value.trim();
+            const username = document.getElementById('username').value.trim();
+            
+            // التحقق من أن جميع الحقول مملوءة
+            if (!name) {
+                alert('يرجى إدخال الاسم');
+                return;
+            }
+            if (!age) {
+                alert('يرجى إدخال العمر');
+                return;
+            }
+            if (!discord) {
+                alert('يرجى إدخال ID الديسكورد');
+                return;
+            }
+            if (!username) {
+                alert('يرجى إدخال اسم الحساب');
+                return;
+            }
+            
+            // حفظ بيانات المستخدم
+            currentUser = {
+                name: name,
+                age: age,
+                discord: discord,
+                username: username
+            };
+            
+            console.log('User data saved:', currentUser);
+            
+            // إخفاء النموذج وإظهار الاختبار
+            document.getElementById('userForm').classList.add('hidden');
+            document.getElementById('quiz').classList.remove('hidden');
+            
+            // بدء الاختبار
+            showQuestion();
+        }
+
+        function showQuestion() {
+            console.log('Showing question:', currentQuestion);
+            
+            const questionData = questions[currentQuestion];
+            const container = document.getElementById('questionContainer');
+            
+            container.innerHTML = `
+                <div class="question">
+                    <h3>${questionData.question}</h3>
+                    <div class="options">
+                        ${questionData.options.map((option, index) => `
+                            <div class="option" onclick="selectOption(${index})">
+                                <input type="radio" name="question${currentQuestion}" value="${index}" id="option${index}">
+                                <label for="option${index}">${option}</label>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('questionNumber').textContent = `السؤال ${currentQuestion + 1} من ${questions.length}`;
+            updateProgress();
+        }
+
+        function selectOption(optionIndex) {
+            console.log('Option selected:', optionIndex);
+            
+            const radios = document.querySelectorAll(`input[name="question${currentQuestion}"]`);
+            radios[optionIndex].checked = true;
+            
+            // إزالة التحديد السابق
+            document.querySelectorAll('.option').forEach(opt => opt.classList.remove('selected'));
+            // إضافة التحديد الجديد
+            document.querySelectorAll('.option')[optionIndex].classList.add('selected');
+        }
+
+        function nextQuestion() {
+            console.log('Next question called');
+            
+            const selectedOption = document.querySelector(`input[name="question${currentQuestion}"]:checked`);
+            
+            if (!selectedOption) {
+                alert('يرجى اختيار إجابة قبل المتابعة');
+                return;
+            }
+            
+            userAnswers[currentQuestion] = parseInt(selectedOption.value);
+            if (userAnswers[currentQuestion] === questions[currentQuestion].correct) {
+                score++;
+            }
+            
+            currentQuestion++;
+            
+            if (currentQuestion < questions.length) {
+                showQuestion();
+            } else {
+                showResult();
+            }
+        }
+
+        function updateProgress() {
+            const progress = ((currentQuestion + 1) / questions.length) * 100;
+            document.getElementById('progress').style.width = progress + '%';
+        }
+
+        function showResult() {
+            console.log('Showing results');
+            
+            document.getElementById('quiz').classList.add('hidden');
+            document.getElementById('result').classList.remove('hidden');
+            
+            const percentage = Math.round((score / questions.length) * 100);
+            
+            document.getElementById('userInfo').innerHTML = `
+                <p><strong>الاسم:</strong> ${currentUser.name}</p>
+                <p><strong>العمر:</strong> ${currentUser.age}</p>
+                <p><strong>Discord ID:</strong> ${currentUser.discord}</p>
+                <p><strong>اسم الحساب:</strong> ${currentUser.username}</p>
+            `;
+            
+            document.getElementById('finalScore').textContent = `${score}/${questions.length} (${percentage}%)`;
+            
+            let message = '';
+            if (percentage >= 90) {
+                message = '🥇 ممتاز جداً! لديك معرفة قوية في أمن المنشآت';
+            } else if (percentage >= 80) {
+                message = '🥈 جيد جداً! أداء مميز في اختبار الأمن';
+            } else if (percentage >= 70) {
+                message = '🥉 جيد! تحتاج لتحسين بسيط في بعض المناطق';
+            } else if (percentage >= 60) {
+                message = '📚 مقبول، يمكنك تحسين معرفتك أكثر';
+            } else {
+                message = '📖 تحتاج لدراسة أمن المنشآت أكثر';
+            }
+            
+            document.getElementById('scoreMessage').innerHTML = `<p style="font-size: 1.2em; margin-top: 20px;">${message}</p>`;
+        }
+
+        function restartQuiz() {
+            console.log('Restarting quiz');
+            
+            currentQuestion = 0;
+            score = 0;
+            userAnswers = [];
+            
+            document.getElementById('result').classList.add('hidden');
+            document.getElementById('userForm').classList.remove('hidden');
+            
+            // إعادة تعيين النموذج
+            document.getElementById('name').value = '';
+            document.getElementById('age').value = '';
+            document.getElementById('discord').value = '';
+            document.getElementById('username').value = '';
+        }
+
+        // التأكد من تحميل الصفحة
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Page loaded successfully');
+        });
+    </script>
+</body>
+</html>
